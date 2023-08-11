@@ -7,70 +7,106 @@
 //
 
 import Foundation
-import UIKit
 
 final class Calculator {
     
-    
     //MARK: - Property
-    var textView : UITextView
-    
-    private var elements: [String] {
-        return textView.text.split(separator: " ").map { "\($0)" }
-    }
-    
-    var expressionIsCorrect: Bool {
-        return elements.last != "+" && elements.last != "-"
-    }
-    
-    var expressionHaveEnoughElement: Bool {
-        return elements.count >= 3
-    }
-    
-    var canAddOperator: Bool {
-        return elements.last != "+" && elements.last != "-" && elements.last != "x" && elements.last != "/"
-    }
-    
-    var expressionHaveResult: Bool {
-        return textView.text.firstIndex(of: "=") == nil
-    }
-    
-    //MARK: - Initialization
-    init(textView: UITextView) {
-        self.textView = textView
-    }
+    weak var delegate: CalculatorDelegate?
     
     //MARK: Accessible
-    func makeCalcul() {
-        var operationsToReduce = elements
+    func calcul(for elements: [String]) {
         
+        if !expressionHaveEnoughElement(elements: elements)  {
+            delegate?.didFail(error: .invalidInput)
+            return
+        }
+        
+        if expressionHaveResult(elements: elements) {
+            delegate?.didFail(error: .alreadyHaveResult)
+            return
+        }
+        
+        if !expressionIsCorrect(elements: elements) {
+            delegate?.didFail(error: .invalidInput)
+            return
+        }
+        
+        var operationsToReduce = cleanExpression(elements: elements)
+               
         //Calcul first multiplication and division
-        performMultiplyOrDivisionOperations(for: &operationsToReduce)
-        
+        performOnlyMultiplyOrDivisionOperations(for: &operationsToReduce)
         // Calcul soustraction and addition
-        performAdditionOrSoustraction(for: &operationsToReduce)
+        performOnlyAdditionOrSoustractionOperations(for: &operationsToReduce)
         
-        self.textView.text.append(" = \(operationsToReduce.first!)")
-        print(textView.text ?? "no info")
+        guard let returnValue = operationsToReduce.first else {
+            //TODO: to test
+            delegate?.didPerformCalculation(result: "\(operationsToReduce)")
+            return }
+        
+        delegate?.didPerformCalculation(result: " = \(returnValue)")
     }
     
-    //MARK: - Private
-    private func performOperation(left: Int, operatorSymbol: String, right: Int) -> Int {
-        switch operatorSymbol {
-        case "+": return left + right
-        case "-": return left - right
-        case "/": return left / right
-        case "x": return left * right
-        default: fatalError("Unknown operator!")
+    func addOperator(for elements: [String], operand: String) {
+        if canAddOperator(elements: elements, for: operand) {
+            delegate?.addOperator(operand: operand)
+        } else {
+            delegate?.didFail(error: .alreadyHaveOperator)
         }
     }
     
-    private func performMultiplyOrDivisionOperations(for operations: inout [String]) {
+    func addNumber(for elements: [String], number: String) {
+        if expressionHaveResult(elements: elements) {
+            delegate?.didFail(error: .alreadyHaveResult)
+        } else {
+            delegate?.addNumber(number: number)
+        }
+    }
+    
+    //MARK: - Private
+    private func expressionIsCorrect(elements: [String]) -> Bool {
+        return elements.last != "+" && elements.last != "-" && elements.last != "/" && elements.last != "x"
+    }
+    
+    private func expressionHaveEnoughElement(elements: [String]) -> Bool {
+        return elements.count >= 3
+    }
+    
+    private func canAddOperator(elements: [String], for operand: String) -> Bool {
+        //TODO: refact ?
+        if elements.first == nil && (operand == "x" || operand == "/") {
+            return false
+        }
+        
+        return elements.last != "+" && elements.last != "-" && elements.last != "/" && elements.last != "x"
+    }
+    
+    private func expressionHaveResult(elements: [String]) -> Bool {
+        return elements.firstIndex(of: "=") != nil
+    }
+    
+    private func performOperation(left: Double, operatorSymbol: String, right: Double) -> Double {
+        switch operatorSymbol {
+        case "+": return left + right
+        case "-": return left - right
+        case "/":
+            if left == 0 || right == 0 {
+                delegate?.didFail(error: .divisionByZero)
+                return 0
+            } else {
+                return left / right
+            }
+        case "x": return left * right
+        default: delegate?.didFail(error: .invalidInput)
+            return 0
+        }
+    }
+    
+    private func performOnlyMultiplyOrDivisionOperations(for operations: inout [String]) {
         while operations.contains("x") || operations.contains("/") {
             if let index = operations.firstIndex(where: { $0 == "x" || $0 == "/" }) {
-                guard let leftOperand = Int(operations[index - 1]),
-                      let rightOperand = Int(operations[index + 1]) else {
-                    // Delegate didFailWhilePerformingMultiplicationOrDivisionCalculations
+                guard let leftOperand = Double(operations[index - 1]),
+                      let rightOperand = Double(operations[index + 1]) else {
+                    delegate?.didFail(error: .unknowError)
                     return
                 }
                 
@@ -84,11 +120,11 @@ final class Calculator {
         }
     }
     
-    private func performAdditionOrSoustraction(for operations: inout [String]) {
+    private func performOnlyAdditionOrSoustractionOperations(for operations: inout [String]) {
         while operations.count > 1 {
-            let left = Int(operations[0])!
+            guard let left = Double(operations[0]) else { return }
             let operatorSymbol = operations[1]
-            let right = Int(operations[2])!
+            guard let right = Double(operations[2]) else { return }
             
             let result = performOperation(left: left, operatorSymbol: operatorSymbol, right: right)
             
@@ -96,5 +132,21 @@ final class Calculator {
             operations.remove(at: 1)
             operations.remove(at: 1)
         }
+    }
+    
+    private func cleanExpression(elements: [String]) -> [String] {
+        var data = elements
+        
+        //        Check first element
+                if data[0] == "-" {
+                    
+                    let value = data[1]
+                    data.remove(at: 1)
+                    data[0] = "-\(value)"
+                    
+                } else if data[0] == "+" {
+                    data.remove(at: 0)
+                }
+        return data
     }
 }

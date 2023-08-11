@@ -11,8 +11,11 @@ import XCTest
 
 final class CalculatorModelTests: XCTestCase {
 
-    let calculator = Calculator(textView: UITextView())
+    let calculator = Calculator()
+    
+    func testWhen(){
+        calculator.calcul(for: ["2","+","3"])
+    }
     
     
-
 }
