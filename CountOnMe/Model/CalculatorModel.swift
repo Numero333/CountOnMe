@@ -17,7 +17,7 @@ final class CalculatorModel {
     
     //MARK: - Property
     
-    private var currentCalcul = "" {
+    var currentCalcul = "" {
         didSet {
             self.delegate?.didUpdate(calcul: self.currentCalcul)
         }
@@ -48,7 +48,7 @@ final class CalculatorModel {
             return
         }
         
-        var operationsToReduce = cleanExpression(elements: self.elements)
+        var operationsToReduce = concatFirstElementWithOperand(elements: self.elements)
         
         //Calcul first multiplication and division
         performOnlyMultiplicationOrDivisionOperations(for: &operationsToReduce)
@@ -166,8 +166,7 @@ final class CalculatorModel {
         }
     }
     
-    // Concat first element
-    private func cleanExpression(elements: [String]) -> [String] {
+    private func concatFirstElementWithOperand(elements: [String]) -> [String] {
         var data = elements
         
         //        Check first element

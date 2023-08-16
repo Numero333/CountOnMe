@@ -8,8 +8,7 @@
 
 import Foundation
 
-struct Operands {
-    
+enum Operands {
     static let addition = "+"
     static let substraction = "-"
     static let multiplication = "x"
