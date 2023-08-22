@@ -126,7 +126,7 @@ final class CalculatorTest: XCTestCase {
         // Given
         model.addOperator(Operator.subtraction)
         model.addNumber("5")
-        model.addOperator("-")
+        model.addOperator(Operator.subtraction)
         model.addNumber("5")
         // When
         model.calcul()
