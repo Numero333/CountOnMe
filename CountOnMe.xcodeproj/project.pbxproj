@@ -109,7 +109,6 @@
 				7423AD182A96575800C4F6B7 /* Controller */,
 				74F5728D2A8D247100E4B4FA /* Views */,
 				74F572952A8D253400E4B4FA /* Ressource */,
-				74F5728C2A8D246D00E4B4FA /* Helpers */,
 			);
 			path = CountOnMe;
 			sourceTree = "<group>";
@@ -145,17 +144,10 @@
 			isa = PBXGroup;
 			children = (
 				74F572902A8D24D900E4B4FA /* CalculatorModel.swift */,
+				74F5728E2A8D24AD00E4B4FA /* Operator.swift */,
 				74F572922A8D24EA00E4B4FA /* ErrorCalcul */,
 			);
 			path = Model;
-			sourceTree = "<group>";
-		};
-		74F5728C2A8D246D00E4B4FA /* Helpers */ = {
-			isa = PBXGroup;
-			children = (
-				74F5728E2A8D24AD00E4B4FA /* Operator.swift */,
-			);
-			path = Helpers;
 			sourceTree = "<group>";
 		};
 		74F5728D2A8D247100E4B4FA /* Views */ = {

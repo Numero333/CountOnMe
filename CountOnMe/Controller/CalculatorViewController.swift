@@ -13,7 +13,7 @@ final class CalculatorViewController: UIViewController, CalculatorModelDelegate 
     //MARK: - Property
     @IBOutlet private var textView: UITextView!
     @IBOutlet private var numberButtons: [UIButton]!
-
+    
     private var model = CalculatorModel()
     
     //MARK: - Override
@@ -26,7 +26,7 @@ final class CalculatorViewController: UIViewController, CalculatorModelDelegate 
     func didFail(error: ErrorCalcul) {
         displayAlert(message: error.content)
     }
-
+    
     func didUpdate(calcul: String) {
         self.textView.text = calcul
     }
@@ -40,7 +40,8 @@ final class CalculatorViewController: UIViewController, CalculatorModelDelegate 
     }
     
     @IBAction private func tappedAdditionButton(_ sender: UIButton) {
-        model.addOperator(Operator.addition)    }
+        model.addOperator(Operator.addition)
+    }
     
     @IBAction private func tappedSubstractionButton(_ sender: UIButton) {
         model.addOperator(Operator.subtraction)

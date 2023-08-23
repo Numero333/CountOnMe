@@ -60,8 +60,6 @@ final class CalculatorModel {
         formatDecimal(for: &returnValue)
         
         currentCalcul += " " + Operator.equal + " " + returnValue
-        
-        delegate?.didUpdate(calcul: currentCalcul)
     }
     
     func addOperator(_ selectedOperator: String) {
@@ -99,7 +97,6 @@ final class CalculatorModel {
     }
     
     private func canAddOperator(elements: [String], for selectedOperator: String) -> Bool {
-        //TODO: refact ?
         if elements.first == nil && (selectedOperator == Operator.multiplication || selectedOperator == Operator.division || selectedOperator == Operator.equal) {
             return false
         }
@@ -141,7 +138,7 @@ final class CalculatorModel {
                 let result = performOperation(left: leftOperand, operatorSymbol: operatorSymbol, right: rightOperand)
                 
                 expression[index - 1] = String(format: "%.2f", result)
-                                
+                
                 expression.remove(at: index)
                 expression.remove(at: index)
             }
@@ -157,7 +154,7 @@ final class CalculatorModel {
             let result = performOperation(left: left, operatorSymbol: operatorSymbol, right: right)
             
             expression[0] = String(format: "%.2f", result)
-                        
+            
             expression.remove(at: 1)
             expression.remove(at: 1)
         }
@@ -166,7 +163,6 @@ final class CalculatorModel {
     private func concatFirstElementWithOperand(elements: [String]) -> [String] {
         var data = elements
         
-        //        Check first element
         if data[0] == Operator.subtraction {
             
             let value = data[1]
