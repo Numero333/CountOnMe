@@ -17,11 +17,11 @@ enum ErrorCalcul: Error {
     
     var content: String {
         switch self {
-        case .divisionByZero: return "Une division par zéro est impossible"
-        case .invalidInput: return "Oups il y a un problème avec les données d'entrée"
-        case .alreadyHaveResult: return "Veuillez relancer un nouveau calcul"
-        case .operatorError: return "Vous ne pouvez pas ajouter cet opérateur ici"
-        case .notEnoughtElement: return "Il n'y a pas assez d'éléments pour effectuer un calcul"
+        case .divisionByZero: return "Division by zero is impossible"
+        case .invalidInput: return "There is a problem with the input data"
+        case .alreadyHaveResult: return "Please start a new calculation"
+        case .operatorError: return "You cannot add this operator here"
+        case .notEnoughtElement: return "There are not enough elements to perform a calculation"
         }
     }
 }
